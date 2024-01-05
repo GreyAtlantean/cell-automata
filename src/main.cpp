@@ -2,11 +2,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
 #include <raylib.h>
 
 #include "../include/grid.h"
-
 
 void draw_grid(int gridX, int gridY, int w, int rendX, int rendY, std::vector<std::vector<int>>& grid);
 
@@ -35,6 +33,12 @@ int main (int argc, char *argv[]) {
 
 	bool paused = false;
 	
+	int target_ups = 40;
+	int target_fps = 144;
+	float update_timer = 0.0;
+	float update_period = 1.0 / target_ups;
+	
+	SetTargetFPS(target_fps);
 
 	Grid grid(gridX, gridY, scale);
 	grid.reset_grid();	
@@ -45,7 +49,6 @@ int main (int argc, char *argv[]) {
 	std::vector<std::vector<int>>* g = grid.get_cells();
 
 	while (!WindowShouldClose()) {
-
 		// input loop 
 		if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 			int posX = GetMouseX() / scale + render_fromX; 
@@ -126,16 +129,16 @@ int main (int argc, char *argv[]) {
 
 		// TODO make this update at a fixed interval/time period that is scalable 
 		// update loop
-		if (!paused && steps == updatetime) {
+		if (!paused && update_timer >= update_period) {
 			grid.update_grid();
-			steps = 0;
 			if (stepstaken % 15 == 0) {
 				grid.add_glider();
 			}
+			update_timer = 0;
 			stepstaken++;
-		} else if (!paused){
-			steps++;
-		}
+		} 	
+		update_timer +=  GetFrameTime();
+
 	}
 
 	CloseWindow();
@@ -153,9 +156,7 @@ void draw_grid(int x, int y, int w, int rendX, int rendY, std::vector<std::vecto
 			
 			if (grid[i + rendX][j + rendY]) {
 	 			DrawRectangleRec(rec, PURPLE); 
-			} else {
-	 			DrawRectangleRec(rec, BLACK); 
-			}
-	  }
+			}	  
+		}
 	}
 }
