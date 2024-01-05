@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,7 +10,6 @@
 
 void draw_grid(int gridX, int gridY, int w, int rendX, int rendY, std::vector<std::vector<int>>& grid);
 
-
 int main (int argc, char *argv[]) {
 	
 	std::cout << "test" << std::endl;
@@ -17,7 +17,7 @@ int main (int argc, char *argv[]) {
 	int screen_width = 1920;
 	int screen_height = 1080;
 	
-	int grid_width = 1920;
+	int grid_width = 1450;
 	int grid_height = 1080;
 
 	int scale = 25;
@@ -31,12 +31,12 @@ int main (int argc, char *argv[]) {
 
 	int steps = 0;
 	int stepstaken = 0;
-	int updatetime = 1;
+	int updatetime = 3;
 
 	bool paused = false;
 	
 
-	Grid grid(grid_width, grid_height, grid_width);
+	Grid grid(gridX, gridY, scale);
 	grid.reset_grid();	
 	InitWindow(screen_width, screen_height, "cell auto");
 	grid.add_oscillator();
@@ -66,6 +66,26 @@ int main (int argc, char *argv[]) {
 				scale = 5;
 			if (scale > 25)
 				scale = 25;
+
+	
+			render_fromX += wheel * scale;
+			render_fromY += wheel * scale;
+
+			if (render_fromY > gridY - grid_height / scale) {
+				render_fromY = gridY - grid_height / scale;
+			}
+			if (render_fromY < 0) {
+				render_fromY = 0;
+			} 
+			
+			if (render_fromX > gridX - grid_width / scale) {
+				render_fromX = gridX - grid_width / scale;
+			}
+			if (render_fromX < 0) {
+				render_fromX = 0;
+			} 
+		
+
 		}
 
 		if (IsKeyPressed(KEY_P)) {
@@ -88,16 +108,23 @@ int main (int argc, char *argv[]) {
 			if (render_fromX < gridX - grid_width / scale)
 				render_fromX++;
 		}
+		
+		if (IsKeyDown(KEY_G) || IsKeyPressed(KEY_N)) {
+			paused = true;
+			grid.update_grid();
+		}
 
 		// render loop
 		BeginDrawing();
 		ClearBackground(BLACK);
-		draw_grid(grid_width / scale, grid_height / scale , scale, render_fromX, render_fromY, *g);
-		DrawFPS(1650 + 20, 20);
+		int draw_x = (std::min(grid_width / scale, gridX));
+		int draw_y = (std::min(grid_height / scale, gridY));
+		draw_grid(draw_x, draw_y, scale, render_fromX, render_fromY, *g);
+		//grid.render_grid(scale, render_fromX, render_fromY);
+		DrawFPS(grid_width + 20, 20);
 		EndDrawing();
-		
 
-		// make this update at a fixed interval/time period that is scalable 
+		// TODO make this update at a fixed interval/time period that is scalable 
 		// update loop
 		if (!paused && steps == updatetime) {
 			grid.update_grid();

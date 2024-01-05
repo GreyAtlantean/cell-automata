@@ -43,6 +43,8 @@ class Grid {
 		void add_oscillator();
 		// Adds a glider to the grid
 		void add_glider();
+		// Renders grid
 
+		void render_grid(int scale, int rendX, int rendY);
 		std::vector<std::vector<int>>* get_cells();
 };

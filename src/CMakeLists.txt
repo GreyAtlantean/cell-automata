@@ -3,6 +3,7 @@ project(cellauto CXX)
 
 # Find raylib package
 find_package(raylib REQUIRED)
+find_package(OpenMP REQUIRED)
 
 # Set the C++ standard to C++11
 set(CMAKE_CXX_STANDARD 11)
@@ -22,10 +23,11 @@ target_compile_options(${PROJECT_NAME} PUBLIC
 	-Wall
 	-Wextra
 	-O2
+	${OpenMP_CXX_FLAGS}
 )
 
 # Include raylib headers
 include_directories(${raylib_INCLUDE_DIRS})
 
 # Link raylib libraries
-target_link_libraries(${PROJECT_NAME} ${raylib_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${raylib_LIBRARIES} OpenMP::OpenMP_CXX)

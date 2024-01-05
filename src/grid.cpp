@@ -1,6 +1,7 @@
 #include "../include/grid.h"
 #include <iterator>
 #include <raylib.h>
+#include <omp.h>
 
 Grid::Grid(int x, int y, int w) {
 	grid_x = x;
@@ -36,8 +37,8 @@ void Grid::reset_grid() {
 
 void Grid::update_grid() {
 	copy = cells;
-
-
+	omp_set_num_threads(4);
+	#pragma omp parallel for
 	for (int i = 0; i < grid_x; i++) {
 		for (int j = 0; j < grid_y; j++) {
 			// check neighbours 
@@ -54,6 +55,25 @@ void Grid::update_grid() {
 			}
 			if (count == 3 && cells[i][j] == false) {
 				cells[i][j] = true;
+			}
+		}
+	}
+
+}
+
+void Grid::render_grid(int scale, int rendX, int rendY) {
+	for (int i = 0; i < grid_x; i++) {
+		for (int j = 0; j < grid_y; j++) {
+			Rectangle rec;
+			rec.x = i * grid_w;
+			rec.y = j * grid_w;
+			rec.width = grid_w;
+			rec.height = grid_w;
+			
+			if (cells[i + rendX][j + rendY]) {
+	 			DrawRectangleRec(rec, PURPLE); 
+			} else {
+	 			DrawRectangleRec(rec, BLACK); 
 			}
 		}
 	}
