@@ -12,7 +12,22 @@ Grid::Grid(int x, int y, int w) {
 }
 
 void Grid::toggle_square(int x, int y) {
-	cells[x][y] = !cells[x][y];
+	if (is_valid_pos(x, y))
+		cells[x][y] = !cells[x][y];
+}
+
+void Grid::toggle_on(int x, int y) {
+	if (is_valid_pos(x, y))
+		cells[x][y] = true;
+}
+
+void Grid::toggle_off(int x, int y) {
+	if (is_valid_pos(x, y))
+		cells[x][y] = false;
+}
+
+bool Grid::is_valid_pos(int x, int y) {
+	return (x > 0 && x < grid_x && y > 0 && y < grid_y);
 }
 
 void Grid::reset_grid() {
