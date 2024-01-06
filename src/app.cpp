@@ -118,6 +118,7 @@ void App::handle_ui() {
 	DrawText("N to step through (single)", grid_width + offset, 555, 25, GRAY);
 	DrawText("G to step through (multiple)", grid_width + offset, 580, 25, GRAY);
 	DrawText("R to reset simulation", grid_width + offset, 605, 25, GRAY);
+	DrawText("ESC to quit", grid_width + offset, 630, 25, GRAY);
 	// Display info
 	if (show_fps)
 		DrawFPS(grid_width + offset, 20);
@@ -148,6 +149,7 @@ void App::render_grid(int x, int y, std::vector<std::vector<int>>& grid) {
 			}	  
 		}
 	}
+	DrawLine(grid_width, 0, grid_width, grid_height, PURPLE);
 }
 
 void App::update_world() {
@@ -166,78 +168,82 @@ void App::update_world() {
 
 void App::handle_input() {
 	if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+		if (GetMouseX() < grid_width && GetMouseY() < grid_height) {
 			int posX = GetMouseX() / scale + render_fromx; 
 			int posY = GetMouseY() / scale + render_fromy;
 			cells.toggle_on(posX, posY);
-		} 
-		if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+		}
+	} 
+	if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+		if (GetMouseX() < grid_dimx && GetMouseY() < grid_dimy) {	
 			int posX = GetMouseX() / scale + render_fromx; 
 			int posY = GetMouseY() / scale + render_fromy;
 			cells.toggle_off(posX, posY);
 		}
+	}
 
-		float wheel = GetMouseWheelMove();
-		if (wheel != 0) {
-			scale += wheel;
-			if (scale < 5)
-				scale = 5;
-			if (scale > 25)
-				scale = 25;
+	float wheel = GetMouseWheelMove();
+	if (wheel != 0) {
+		scale += wheel;
+		if (scale < 5)
+			scale = 5;
+		if (scale > 25)
+			scale = 25;
 
-	
-			render_fromx += wheel * scale;
-			render_fromy += wheel * scale;
 
-			if (render_fromy > grid_dimx - grid_height / scale) {
-				render_fromy = grid_dimy - grid_height / scale;
-			}
-			if (render_fromy < 0) {
-				render_fromy = 0;
-			} 
-			
-			if (render_fromx > grid_dimx - grid_width / scale) {
-				render_fromx = grid_dimx - grid_width / scale;
-			}
-			if (render_fromx < 0) {
-				render_fromx = 0;
-			} 
+		render_fromx += wheel * scale;
+		render_fromy += wheel * scale;
 
+		if (render_fromy > grid_dimx - grid_height / scale) {
+			render_fromy = grid_dimy - grid_height / scale;
 		}
-	
-		if (IsKeyPressed(KEY_P)) {
-			paused = !paused;
-		}
+		if (render_fromy < 0) {
+			render_fromy = 0;
+		} 
 		
-		// Move the camera position
-		if (IsKeyDown(KEY_W)) {
-			if (render_fromy > 0)
-				render_fromy--;
+		if (render_fromx > grid_dimx - grid_width / scale) {
+			render_fromx = grid_dimx - grid_width / scale;
 		}
-		if (IsKeyDown(KEY_A)) {
-			if (render_fromx > 0)
-				render_fromx--;
-		}
-		if (IsKeyDown(KEY_S)) {
-			if (render_fromy < grid_dimy - grid_height / scale)
-				render_fromy++;
-		}
+		if (render_fromx < 0) {
+			render_fromx = 0;
+		} 
 
-		if (IsKeyDown(KEY_D)) {
-			if (render_fromx < grid_dimx - grid_width / scale)
-				render_fromx++;
-		}
+	}
 
-		// step through the program step by step
-		// if G is held down it will be continuous 
-		// if N is pressed, it will go through a single step
-		if (IsKeyDown(KEY_G) || IsKeyPressed(KEY_N)) {
-			paused = true;
-			cells.update_grid();
-		}
-		
-		// Reset the simulation
-		if (IsKeyPressed(KEY_R)) {
-			cells.reset_grid();
-		}
+	if (IsKeyPressed(KEY_P)) {
+		paused = !paused;
+	}
+	
+	// Move the camera position
+	if (IsKeyDown(KEY_W)) {
+		if (render_fromy > 0)
+			render_fromy--;
+	}
+	if (IsKeyDown(KEY_A)) {
+		if (render_fromx > 0)
+			render_fromx--;
+	}
+	if (IsKeyDown(KEY_S)) {
+		if (render_fromy < grid_dimy - grid_height / scale)
+			render_fromy++;
+	}
+
+	if (IsKeyDown(KEY_D)) {
+		if (render_fromx < grid_dimx - grid_width / scale)
+			render_fromx++;
+	}
+
+	// step through the program step by step
+	// if G is held down it will be continuous 
+	// if N is pressed, it will go through a single step
+	if (IsKeyDown(KEY_G) || IsKeyPressed(KEY_N)) {
+		paused = true;
+		cells.update_grid();
+	}
+	
+	// Reset the simulation
+	if (IsKeyPressed(KEY_R)) {
+		cells.reset_grid();
+	}
 
 }
