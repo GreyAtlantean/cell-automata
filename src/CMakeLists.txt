@@ -8,7 +8,7 @@ find_package(OpenMP REQUIRED)
 # Set the C++ standard to C++11
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories(${CMAKE_SOURCE_DIR}include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Set source files
 set(SOURCE_FILES
@@ -21,8 +21,8 @@ set(SOURCE_FILES
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_compile_options(${PROJECT_NAME} PUBLIC
-	-Wall
-	-Wextra
+	#-Wall
+	#-Wextra
 	-O2
 	${OpenMP_CXX_FLAGS}
 )

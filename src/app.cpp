@@ -1,10 +1,17 @@
 #include "../include/app.h"
-#include <raylib.h>
 
+#include <cstdio>
+#include <raylib.h>
+#include <iostream>
+
+#define RAYGUI_IMPLEMENTATION
+#include "../include/raygui.h"
 
 App::App() {
 	screen_width = 1920;
 	screen_height = 1080;
+
+	offset = 100;
 
 	grid_width = 1300;
 	grid_height = screen_height;
@@ -20,9 +27,11 @@ App::App() {
 	steps_taken = 0;
 
 	paused = false;
+	show_fps = true;
+	show_ups = true;
 
-	tgt_fps = 144;
-	tgt_ups = 60;
+	tgt_fps = 144.0f;
+	tgt_ups = 60.0f;
 
 	update_timer = 0;
 	update_period = 1.0 / tgt_ups;
@@ -33,8 +42,10 @@ App::App() {
 void App::run() {
 	
 	// Setup window for raylib
-	InitWindow(screen_width, screen_height, "cell testtt auto");
-
+	InitWindow(screen_width, screen_height, "cell auto");
+	GuiLoadStyleDefault();
+	GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_LEFT);
+	GuiSetAlpha(1.0f);
 	
 	// Setup the grid
 	cells.reset_grid();
@@ -45,30 +56,65 @@ void App::run() {
 
 	SetTargetFPS(tgt_fps);
 	while (!WindowShouldClose()) {
-		// input loop 
+		// handle input 
 		handle_input();
-	
+		
+		// render
 		BeginDrawing();
+
 		ClearBackground(BLACK);
+		
 		int draw_x = (std::min(grid_width / scale, grid_dimx));
 		int draw_y = (std::min(grid_height / scale, grid_dimy));
 		render_grid(draw_x, draw_y, *cells_ref);
-		DrawFPS(grid_width + 20, 20);
+		handle_ui();
+		bool forcedcheck = false;
 		EndDrawing();
 
-		// update loop
-		if (!paused && update_timer >= update_period) {
-			cells.update_grid();
-			if (steps_taken % 15 == 0) {
-				cells.add_glider();
-			}
-			update_timer -= update_period;
-			steps_taken++;
-		} 	
-		update_timer +=  GetFrameTime();
+		// update world
+		update_world();
 	}
 
 	CloseWindow();
+
+}
+
+void App::handle_ui() {
+	int col_width = 250;
+	// Toggle FPS display
+	GuiCheckBox ((Rectangle){(float)grid_width + offset, 50,  20, 20}, "Toggle FPS Display", &show_fps);
+	// Change target fps
+	DrawText("Adjust target FPS", grid_width + offset, 80, 10, GRAY);
+	GuiSlider((Rectangle){(float)grid_width + offset, 100, 120, 20}, "T", TextFormat("%2.2f", tgt_fps), &tgt_fps, 60, 360);
+	SetTargetFPS(tgt_fps);
+	
+	// Toggle UPS display
+	GuiCheckBox ((Rectangle){(float)grid_width + offset + col_width, 50,  20, 20}, "Toggle UPS Display", &show_ups);
+	// Change target ups
+	DrawText("Adjust target UPS", grid_width + offset + col_width, 80, 10, GRAY);
+	GuiSlider((Rectangle){(float)grid_width + offset + col_width, 100, 120, 20}, "T", TextFormat("%2.2f", tgt_ups), &tgt_ups, 10, 100);
+	update_period = 1 / tgt_ups;
+	
+
+	
+	// Change rules for game
+	
+
+	// Display controls
+	
+	// Display info
+	if (show_fps)
+		DrawFPS(grid_width + offset, 20);
+	if (show_ups) {
+		snprintf(txt_buf, 50, "%i UPS", (int)tgt_ups);
+		DrawText(txt_buf, grid_width + offset + col_width, 20, 20, LIME);
+	}
+
+		
+
+}
+
+void App::setup_ui() {
 
 }
 
@@ -86,6 +132,18 @@ void App::render_grid(int x, int y, std::vector<std::vector<int>>& grid) {
 			}	  
 		}
 	}
+}
+
+void App::update_world() {
+	while (!paused && update_timer >= update_period) {
+			cells.update_grid();
+			if (steps_taken % 15 == 0) {
+				cells.add_glider();
+			}
+			update_timer -= update_period;
+			steps_taken++;
+		} 	
+		update_timer +=  GetFrameTime();
 }
 
 void App::handle_input() {
