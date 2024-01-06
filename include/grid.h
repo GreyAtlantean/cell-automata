@@ -22,11 +22,15 @@ class Grid {
 		void toggle_off(int x, int y);
 		// Checks whether a given coord is within bounds
 		bool is_valid_pos(int x, int y);
-
 		// Add an oscillator
 		void add_oscillator();
 		// Adds a glider to the grid
 		void add_glider();
+		// Gets the rules
+		void get_rules(int* min, int* max, int* live);
+		// Update the rules
+		void update_rules(int* min, int* max, int* live);
+
 		// Returns a reference to the cells vector
 		std::vector<std::vector<int>>* get_cells();
 	private:
@@ -36,6 +40,12 @@ class Grid {
 		int grid_x = 10;
 		int grid_y = 10;
 		int grid_w = 20;
+		
+		// default is conway's game of life
+		int min_n = 2;
+		int max_n = 3;
+		// neighbours needed for a dead cell to become living
+		int n_to_live = 3;
 
 
 		const int neighbours[8][2] = {

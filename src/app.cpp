@@ -37,6 +37,8 @@ App::App() {
 	update_period = 1.0 / tgt_ups;
 	
 	cells.setup_grid(grid_dimx, grid_dimy);
+
+	cells.get_rules(&min_n, &max_n, &n_need);
 }
 
 void App::run() {
@@ -98,7 +100,13 @@ void App::handle_ui() {
 
 	
 	// Change rules for game
-	
+	DrawText("Min neighbours to live", grid_width + offset, 185, 15, GRAY);	
+	GuiSpinner((Rectangle){(float)grid_width + offset, 200, 140, 30}, NULL, &min_n, 0, 8, false);
+	DrawText("Max neighbours to live", grid_width + offset, 235, 15, GRAY);	
+	GuiSpinner((Rectangle){(float)grid_width + offset, 250, 140, 30}, NULL, &max_n, 0, 8, false);
+	DrawText("Need neighbours to live", grid_width + offset, 285, 15, GRAY);	
+	GuiSpinner((Rectangle){(float)grid_width + offset, 300, 140, 30}, NULL, &n_need, 1, 8, false);
+	cells.update_rules(&min_n, &max_n, &n_need);
 
 	// Display controls
 	

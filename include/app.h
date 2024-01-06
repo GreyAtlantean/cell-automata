@@ -48,5 +48,5 @@ class App {
 		char txt_buf[50];
 
 		Grid cells;
-	
+		int min_n, max_n, n_need;
 };

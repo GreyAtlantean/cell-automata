@@ -61,10 +61,10 @@ void Grid::update_grid() {
 				if (ni >= 0 && ni < grid_x && nj >= 0 && nj < grid_y && copy[ni][nj])
 					count++;
 			}
-			if ((count < 2 || count > 3) && cells[i][j] != false) {
+			if ((count < min_n || count > max_n) && cells[i][j] != false) {
 				cells[i][j] = false;
 			}
-			if (count == 3 && cells[i][j] == false) {
+			if (count == n_to_live && cells[i][j] == false) {
 				cells[i][j] = true;
 			}
 		}
@@ -84,6 +84,31 @@ void Grid::add_glider() {
 	cells[15][11] = true;
 	cells[14][11] = true;
 	cells[13][10] = true;
+}
+
+void Grid::get_rules(int* min, int* max, int* live) {
+	*min = min_n;
+	*max = max_n;
+	*live = n_to_live;
+}
+
+void Grid::update_rules(int* min, int* max, int* live) {
+	if (*min <= *max) {
+		min_n = *min;
+	} else {
+		*max = *min;
+		*min = min_n;
+	}
+
+	if (*max >= *min) {
+		max_n = *max;
+	} else {
+		*min = *max;
+		*max = max_n;
+	}
+	
+	n_to_live = *live;
+	
 }
 
 std::vector<std::vector<int>>* Grid::get_cells() {
