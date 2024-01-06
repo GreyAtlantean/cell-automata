@@ -1,5 +1,6 @@
 #include "../include/app.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <raylib.h>
 
@@ -16,6 +17,7 @@ App::App() {
 	grid_height = screen_height;
 
 	scale = 25;
+	camera_speed = 400;
 
 	render_fromx = 0;
 	render_fromy = 0;
@@ -217,21 +219,21 @@ void App::handle_input() {
 	
 	// Move the camera position
 	if (IsKeyDown(KEY_W)) {
-		if (render_fromy > 0)
-			render_fromy--;
+		render_fromy -= camera_speed / GetFPS();
+		render_fromy = std::max(render_fromy, 0);
 	}
 	if (IsKeyDown(KEY_A)) {
-		if (render_fromx > 0)
-			render_fromx--;
+		render_fromx -= camera_speed / GetFPS();
+		render_fromx = std::max(render_fromx, 0);
 	}
 	if (IsKeyDown(KEY_S)) {
-		if (render_fromy < grid_dimy - grid_height / scale)
-			render_fromy++;
+		render_fromy += camera_speed / GetFPS();
+		render_fromy = std::min(render_fromy, grid_dimy - grid_height / scale);
 	}
 
 	if (IsKeyDown(KEY_D)) {
-		if (render_fromx < grid_dimx - grid_width / scale)
-			render_fromx++;
+		render_fromx += camera_speed / GetFPS();
+		render_fromx = std::min(render_fromx, grid_dimx - grid_width / scale);
 	}
 
 	// step through the program step by step

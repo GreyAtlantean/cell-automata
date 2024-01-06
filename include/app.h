@@ -37,6 +37,7 @@ class App {
 		bool show_ups;
 
 		int scale;
+		int camera_speed;
 
 		float tgt_fps, tgt_ups;
 		float curr_f, curr_u;	
