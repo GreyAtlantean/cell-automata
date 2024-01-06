@@ -109,7 +109,15 @@ void App::handle_ui() {
 	cells.update_rules(&min_n, &max_n, &n_need);
 
 	// Display controls
-	
+	DrawText("Controls", grid_width + offset, 400, 30, GRAY);
+	DrawText("WASD for camera", grid_width + offset, 430, 25, GRAY);
+	DrawText("Left click to add cells", grid_width + offset, 455, 25, GRAY);
+	DrawText("Right click to remove cells", grid_width + offset, 480, 25, GRAY);
+	DrawText("Scroll for zoom", grid_width + offset, 505, 25, GRAY);
+	DrawText("P to toggle pause", grid_width + offset, 530, 25, GRAY);
+	DrawText("N to step through (single)", grid_width + offset, 555, 25, GRAY);
+	DrawText("G to step through (multiple)", grid_width + offset, 580, 25, GRAY);
+	DrawText("R to reset simulation", grid_width + offset, 605, 25, GRAY);
 	// Display info
 	if (show_fps)
 		DrawFPS(grid_width + offset, 20);
@@ -143,15 +151,17 @@ void App::render_grid(int x, int y, std::vector<std::vector<int>>& grid) {
 }
 
 void App::update_world() {
+	if (!paused) {
+		update_timer += GetFrameTime();
+	}
 	while (!paused && update_timer >= update_period) {
-			cells.update_grid();
-			if (steps_taken % 15 == 0) {
-				cells.add_glider();
-			}
-			update_timer -= update_period;
-			steps_taken++;
-		} 	
-		update_timer +=  GetFrameTime();
+		cells.update_grid();
+		if (steps_taken % 15 == 0) {
+			cells.add_glider();
+		}
+		update_timer -= update_period;
+		steps_taken++;
+	} 	
 }
 
 void App::handle_input() {
@@ -193,7 +203,7 @@ void App::handle_input() {
 			} 
 
 		}
-
+	
 		if (IsKeyPressed(KEY_P)) {
 			paused = !paused;
 		}
@@ -216,7 +226,6 @@ void App::handle_input() {
 			if (render_fromx < grid_dimx - grid_width / scale)
 				render_fromx++;
 		}
-		
 
 		// step through the program step by step
 		// if G is held down it will be continuous 
@@ -224,6 +233,11 @@ void App::handle_input() {
 		if (IsKeyDown(KEY_G) || IsKeyPressed(KEY_N)) {
 			paused = true;
 			cells.update_grid();
+		}
+		
+		// Reset the simulation
+		if (IsKeyPressed(KEY_R)) {
+			cells.reset_grid();
 		}
 
 }
