@@ -2,7 +2,6 @@
 
 #include <cstdio>
 #include <raylib.h>
-#include <iostream>
 
 #define RAYGUI_IMPLEMENTATION
 #include "../include/raygui.h"
@@ -23,8 +22,6 @@ App::App() {
 
 	grid_dimx = 1000;
 	grid_dimy = 1000;
-
-	steps_taken = 0;
 
 	paused = false;
 	hide_ui = false;
@@ -121,6 +118,7 @@ void App::handle_ui() {
 		DrawText("R to reset simulation", grid_width + offset, 605, 25, GRAY);
 		DrawText("ESC to quit", grid_width + offset, 630, 25, GRAY);
 		DrawText("H to toggle UI visibility", grid_width + offset, 655, 25, GRAY);
+		DrawText("C to create a glider in the top left", grid_width + offset, 680, 25, GRAY);
 	}	
 	
 	// Display info
@@ -156,11 +154,7 @@ void App::update_world() {
 	}
 	while (!paused && update_timer >= update_period) {
 		cells.update_grid();
-		if (steps_taken % 15 == 0) {
-			cells.add_glider();
-		}
 		update_timer -= update_period;
-		steps_taken++;
 	} 	
 }
 
@@ -246,6 +240,10 @@ void App::handle_input() {
 
 	if (IsKeyPressed(KEY_H)) {
 		hide_ui = !hide_ui;
+	}
+
+	if (IsKeyPressed(KEY_C)) {
+		cells.add_glider();
 	}
 
 }

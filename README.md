@@ -21,6 +21,8 @@ N - Take a single step through the simulation
 
 G - Take continuous steps through the simulation
 
+C - Create a glider in the top left of the simulation
+
 R - Reset the simulation
 
 H - Toggle UI visibility (hide)

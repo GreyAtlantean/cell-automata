@@ -32,8 +32,6 @@ class App {
 		int grid_dimx;
 		int grid_dimy;
 		
-		int steps_taken;
-		
 		bool paused, hide_ui, hide_stats;
 		bool show_fps;
 		bool show_ups;
