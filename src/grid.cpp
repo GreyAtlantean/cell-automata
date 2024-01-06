@@ -1,5 +1,5 @@
 #include "../include/grid.h"
-#include <iterator>
+
 #include <raylib.h>
 #include <omp.h>
 
@@ -7,9 +7,20 @@ Grid::Grid(int x, int y, int w) {
 	grid_x = x;
 	grid_y = y;
 	grid_w = w;
+	
+	reset_grid();
 
-	cells = std::vector<std::vector<int>>(grid_x, std::vector<int>(grid_y, false));
+}
 
+Grid::Grid() {
+	grid_w = 25;
+}
+
+void Grid::setup_grid(int x, int y) {
+	grid_x = x;
+	grid_y = y;
+
+	reset_grid();
 }
 
 void Grid::toggle_square(int x, int y) {
@@ -72,8 +83,6 @@ void Grid::render_grid(int scale, int rendX, int rendY) {
 			
 			if (cells[i + rendX][j + rendY]) {
 	 			DrawRectangleRec(rec, PURPLE); 
-			} else {
-	 			DrawRectangleRec(rec, BLACK); 
 			}
 		}
 	}

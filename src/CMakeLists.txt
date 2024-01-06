@@ -14,6 +14,7 @@ include_directories(${CMAKE_SOURCE_DIR}include)
 set(SOURCE_FILES
     main.cpp
 	grid.cpp
+	app.cpp
 )
 
 # Add executable target

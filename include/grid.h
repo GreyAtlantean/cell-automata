@@ -3,27 +3,11 @@
 #include <vector>
 
 class Grid {
-	private:
-		std::vector<std::vector<int>> cells;
-		std::vector<std::vector<int>> copy;
-
-		int grid_x = 10;
-		int grid_y = 10;
-		int grid_w = 20;
-
-
-		const int neighbours[8][2] = {
-			{-1, -1}, {-1, 0}, {-1,  1},
-			{ 0, -1},          { 0,  1},
-			{ 1, -1}, { 1, 0}, { 1,  1}
-		};
-
-
-
 	public:
-		// Setup the grid
+		Grid();
 		Grid(int x, int y, int w);
-	
+		// Setup the grid
+		void setup_grid(int x, int y);	
 		// Update the grid a single step
 		void update_grid();
 		// Reset the grid 
@@ -43,8 +27,21 @@ class Grid {
 		void add_oscillator();
 		// Adds a glider to the grid
 		void add_glider();
-		// Renders grid
-
+		// Renders grid - dont use - very slow
 		void render_grid(int scale, int rendX, int rendY);
 		std::vector<std::vector<int>>* get_cells();
+	private:
+		std::vector<std::vector<int>> cells;
+		std::vector<std::vector<int>> copy;
+
+		int grid_x = 10;
+		int grid_y = 10;
+		int grid_w = 20;
+
+
+		const int neighbours[8][2] = {
+			{-1, -1}, {-1, 0}, {-1,  1},
+			{ 0, -1},          { 0,  1},
+			{ 1, -1}, { 1, 0}, { 1,  1}
+		};
 };
