@@ -27,8 +27,7 @@ class Grid {
 		void add_oscillator();
 		// Adds a glider to the grid
 		void add_glider();
-		// Renders grid - dont use - very slow
-		void render_grid(int scale, int rendX, int rendY);
+		// Returns a reference to the cells vector
 		std::vector<std::vector<int>>* get_cells();
 	private:
 		std::vector<std::vector<int>> cells;

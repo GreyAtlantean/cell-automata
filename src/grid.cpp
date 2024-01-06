@@ -72,24 +72,6 @@ void Grid::update_grid() {
 
 }
 
-void Grid::render_grid(int scale, int rendX, int rendY) {
-	for (int i = 0; i < grid_x; i++) {
-		for (int j = 0; j < grid_y; j++) {
-			Rectangle rec;
-			rec.x = i * grid_w;
-			rec.y = j * grid_w;
-			rec.width = grid_w;
-			rec.height = grid_w;
-			
-			if (cells[i + rendX][j + rendY]) {
-	 			DrawRectangleRec(rec, PURPLE); 
-			}
-		}
-	}
-
-}
-
-
 void Grid::add_oscillator() {
 	cells[10][9] = true;
 	cells[10][10] = true;
