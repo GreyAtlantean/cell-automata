@@ -27,6 +27,7 @@ App::App() {
 	steps_taken = 0;
 
 	paused = false;
+	hide_ui = false;
 	show_fps = true;
 	show_ups = true;
 
@@ -70,7 +71,6 @@ void App::run() {
 		int draw_y = (std::min(grid_height / scale, grid_dimy));
 		render_grid(draw_x, draw_y, *cells_ref);
 		handle_ui();
-		bool forcedcheck = false;
 		EndDrawing();
 
 		// update world
@@ -83,42 +83,46 @@ void App::run() {
 
 void App::handle_ui() {
 	int col_width = 250;
-	// Toggle FPS display
-	GuiCheckBox ((Rectangle){(float)grid_width + offset, 50,  20, 20}, "Toggle FPS Display", &show_fps);
-	// Change target fps
-	DrawText("Adjust target FPS", grid_width + offset, 80, 10, GRAY);
-	GuiSlider((Rectangle){(float)grid_width + offset, 100, 120, 20}, "T", TextFormat("%2.2f", tgt_fps), &tgt_fps, 60, 360);
-	SetTargetFPS(tgt_fps);
-	
-	// Toggle UPS display
-	GuiCheckBox ((Rectangle){(float)grid_width + offset + col_width, 50,  20, 20}, "Toggle UPS Display", &show_ups);
-	// Change target ups
-	DrawText("Adjust target UPS", grid_width + offset + col_width, 80, 10, GRAY);
-	GuiSlider((Rectangle){(float)grid_width + offset + col_width, 100, 120, 20}, "T", TextFormat("%2.2f", tgt_ups), &tgt_ups, 10, 100);
-	update_period = 1 / tgt_ups;
-	
+	if (!hide_ui) {
+		// Toggle FPS display
+		GuiCheckBox ((Rectangle){(float)grid_width + offset, 50,  20, 20}, "Toggle FPS Display", &show_fps);
+		// Change target fps
+		DrawText("Adjust target FPS", grid_width + offset, 80, 10, GRAY);
+		GuiSlider((Rectangle){(float)grid_width + offset, 100, 120, 20}, "T", TextFormat("%2.2f", tgt_fps), &tgt_fps, 60, 360);
+		SetTargetFPS(tgt_fps);
+		
+		// Toggle UPS display
+		GuiCheckBox ((Rectangle){(float)grid_width + offset + col_width, 50,  20, 20}, "Toggle UPS Display", &show_ups);
+		// Change target ups
+		DrawText("Adjust target UPS", grid_width + offset + col_width, 80, 10, GRAY);
+		GuiSlider((Rectangle){(float)grid_width + offset + col_width, 100, 120, 20}, "T", TextFormat("%2.2f", tgt_ups), &tgt_ups, 10, 100);
+		update_period = 1 / tgt_ups;
+		
 
+		
+		// Change rules for game
+		DrawText("Min neighbours to live", grid_width + offset, 185, 15, GRAY);	
+		GuiSpinner((Rectangle){(float)grid_width + offset, 200, 140, 30}, NULL, &min_n, 0, 8, false);
+		DrawText("Max neighbours to live", grid_width + offset, 235, 15, GRAY);	
+		GuiSpinner((Rectangle){(float)grid_width + offset, 250, 140, 30}, NULL, &max_n, 0, 8, false);
+		DrawText("Need neighbours to live", grid_width + offset, 285, 15, GRAY);	
+		GuiSpinner((Rectangle){(float)grid_width + offset, 300, 140, 30}, NULL, &n_need, 1, 8, false);
+		cells.update_rules(&min_n, &max_n, &n_need);
+		
+		// Display controls
+		DrawText("Controls", grid_width + offset, 400, 30, GRAY);
+		DrawText("WASD for camera", grid_width + offset, 430, 25, GRAY);
+		DrawText("Left click to add cells", grid_width + offset, 455, 25, GRAY);
+		DrawText("Right click to remove cells", grid_width + offset, 480, 25, GRAY);
+		DrawText("Scroll for zoom", grid_width + offset, 505, 25, GRAY);
+		DrawText("P to toggle pause", grid_width + offset, 530, 25, GRAY);
+		DrawText("N to step through (single)", grid_width + offset, 555, 25, GRAY);
+		DrawText("G to step through (multiple)", grid_width + offset, 580, 25, GRAY);
+		DrawText("R to reset simulation", grid_width + offset, 605, 25, GRAY);
+		DrawText("ESC to quit", grid_width + offset, 630, 25, GRAY);
+		DrawText("H to toggle UI visibility", grid_width + offset, 655, 25, GRAY);
+	}	
 	
-	// Change rules for game
-	DrawText("Min neighbours to live", grid_width + offset, 185, 15, GRAY);	
-	GuiSpinner((Rectangle){(float)grid_width + offset, 200, 140, 30}, NULL, &min_n, 0, 8, false);
-	DrawText("Max neighbours to live", grid_width + offset, 235, 15, GRAY);	
-	GuiSpinner((Rectangle){(float)grid_width + offset, 250, 140, 30}, NULL, &max_n, 0, 8, false);
-	DrawText("Need neighbours to live", grid_width + offset, 285, 15, GRAY);	
-	GuiSpinner((Rectangle){(float)grid_width + offset, 300, 140, 30}, NULL, &n_need, 1, 8, false);
-	cells.update_rules(&min_n, &max_n, &n_need);
-
-	// Display controls
-	DrawText("Controls", grid_width + offset, 400, 30, GRAY);
-	DrawText("WASD for camera", grid_width + offset, 430, 25, GRAY);
-	DrawText("Left click to add cells", grid_width + offset, 455, 25, GRAY);
-	DrawText("Right click to remove cells", grid_width + offset, 480, 25, GRAY);
-	DrawText("Scroll for zoom", grid_width + offset, 505, 25, GRAY);
-	DrawText("P to toggle pause", grid_width + offset, 530, 25, GRAY);
-	DrawText("N to step through (single)", grid_width + offset, 555, 25, GRAY);
-	DrawText("G to step through (multiple)", grid_width + offset, 580, 25, GRAY);
-	DrawText("R to reset simulation", grid_width + offset, 605, 25, GRAY);
-	DrawText("ESC to quit", grid_width + offset, 630, 25, GRAY);
 	// Display info
 	if (show_fps)
 		DrawFPS(grid_width + offset, 20);
@@ -126,13 +130,7 @@ void App::handle_ui() {
 		snprintf(txt_buf, 50, "%i UPS", (int)tgt_ups);
 		DrawText(txt_buf, grid_width + offset + col_width, 20, 20, LIME);
 	}
-
-		
-
-}
-
-void App::setup_ui() {
-
+	
 }
 
 void App::render_grid(int x, int y, std::vector<std::vector<int>>& grid) {
@@ -244,6 +242,10 @@ void App::handle_input() {
 	// Reset the simulation
 	if (IsKeyPressed(KEY_R)) {
 		cells.reset_grid();
+	}
+
+	if (IsKeyPressed(KEY_H)) {
+		hide_ui = !hide_ui;
 	}
 
 }

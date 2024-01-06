@@ -34,7 +34,7 @@ class App {
 		
 		int steps_taken;
 		
-		bool paused;
+		bool paused, hide_ui, hide_stats;
 		bool show_fps;
 		bool show_ups;
 

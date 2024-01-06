@@ -23,6 +23,10 @@ G - Take continuous steps through the simulation
 
 R - Reset the simulation
 
+H - Toggle UI visibility (hide)
+
+F - Toggle Stats visibility FPS/UPS
+
 ESC - Quit the program
 
 
