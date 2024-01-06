@@ -20,8 +20,8 @@ App::App() {
 	render_fromx = 0;
 	render_fromy = 0;
 
-	grid_dimx = 1000;
-	grid_dimy = 1000;
+	grid_dimx = 1300;
+	grid_dimy = screen_height;
 
 	paused = false;
 	hide_ui = false;
@@ -176,15 +176,24 @@ void App::handle_input() {
 
 	float wheel = GetMouseWheelMove();
 	if (wheel != 0) {
+		
+		// old x and y screen cell count
+		int preX = grid_width / scale;
+		int preY = grid_height / scale;
+			
 		scale += wheel;
-		if (scale < 5)
-			scale = 5;
+
+		if (scale < 3)
+			scale = 3;
 		if (scale > 25)
 			scale = 25;
+		
+		// new cell count
+		int postX = grid_width / scale;
+		int postY = grid_height / scale;
 
-
-		render_fromx += wheel * scale;
-		render_fromy += wheel * scale;
+		render_fromx += (preX - postX) / 2;
+		render_fromy += (preY - postY) / 2;
 
 		if (render_fromy > grid_dimx - grid_height / scale) {
 			render_fromy = grid_dimy - grid_height / scale;
